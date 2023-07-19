@@ -1,0 +1,22 @@
+.header-transition-enter {
+    opacity: 1;
+    transform: translateY(-100%);
+  }
+  
+  .header-transition-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 200ms;
+  }
+  
+  .header-transition-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .header-transition-exit-active {
+    opacity: 1;
+    transform: translateY(-100%);
+    transition: opacity 300ms, transform 200ms;
+  }
+
