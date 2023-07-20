@@ -18,7 +18,7 @@ export default function HomePage(props: HomePageProps): JSX.Element {
   return (
     <Fragment>
       <div className="body">
-        {/* <Banner /> */}
+        <Banner />
         <h1 className="category-name">Everything</h1>
         <Products Items={props.products} />
       </div>
