@@ -40,22 +40,23 @@
   margin-top: 21px;
   padding: right 5%;
 }
-.header-cart-button {
-  width: 40px;
-  height: 40px;
-  margin-top: 15px;
-  padding: right 5%;
-  background-color: white;
-  border-radius: 50%;
-}
 .header-button-image {
   width: 32px;
   height: auto;
 }
-.header-cart-button-image {
-  padding-top: 4px;
-  width: 32px;
-  height: auto;
+.total-cart-quantity {
+  background-color: white;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  color: rgb(0, 0, 0);
+  margin-top: -50px;
+  margin-left: 20px;
+  text-align: center;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media screen and (min-width: 700px) {

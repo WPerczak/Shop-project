@@ -1,45 +1,52 @@
 import React from "react";
 import Image from "next/image";
-import example from "../Header/logo.webp";
+import CartItem from "./CartItem";
+import { useAppSelector } from "@/app/hooks";
+import { RootState } from "@/app/store";
 
 interface CartModalOverlayProps {
   isOpen: boolean;
   toggleModal: () => void;
 }
 
-const CartModalOverlay = ({ isOpen, toggleModal }: CartModalOverlayProps): JSX.Element | null => {
+const CartModalOverlay: React.FC<CartModalOverlayProps> = ({
+  isOpen,
+  toggleModal,
+}) => {
   const handleOverlayClick = () => {
     toggleModal();
     const bodyElement = document.body;
-    bodyElement?.classList.remove("cartIsOpen")
+    bodyElement?.classList.remove("cartIsOpen");
   };
 
+  const cartItems = useAppSelector((state: RootState) => state.cart.items);
+  const cartPrice = useAppSelector((state: RootState) => state.cart.totalPrice);
+
   return isOpen ? (
-    <div className="modal-overlay" id="modal-overlay" onClick={handleOverlayClick}>
+    <div className="modal-overlay" id="modal-overlay">
       <div className="modal-content">
-        <div className="modal-list">
-          <ul className="modal-products">
-            <li className="modal-product">
-              <div className="modal-image">
-                <Image src={example} alt="example" className="example" />
-              </div>
-              <div className="modal-title">
-                <h2>Modal Title</h2>
-                <h2>50$</h2>
-              </div>
-              <div className="modal-buttons">
-                <div className="modal-button-less">-</div>
-                <div className="modal-count">1</div>
-                <div className="modal-button-more">+</div>
-              </div>
-            </li>
-          </ul>
-        </div>
+      {cartItems.length > 0 ? (
+          cartItems.map((item) => (
+            <CartItem
+              key={item.id}
+              item={{
+                id: item.id,
+                title: item.title,
+                quantity: item.quantity,
+                total: item.total,
+                price: item.price,
+                image: item.image,
+              }}
+            />
+          ))
+        ) : (
+          <p>There is nothing in the cart.</p>
+        )}
         <div className="total-amount">
           <span>Total:</span>
-          <span>500$</span>
+          <span>{cartPrice.toFixed(2)}</span>
         </div>
-        <button>BUY</button>
+        <button onClick={handleOverlayClick}>BUY</button>
       </div>
     </div>
   ) : null;

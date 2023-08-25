@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import logo from "./logo.webp";
 import login from "./login.png";
-import cart from "./shopping-cart.png";
+import cart from "./cart.png";
 import toggle from "./toggle.png";
 import Categories from "./Categories/Categories";
 import Image from "next/image";
 import Link from "next/link";
+import { useAppSelector } from "@/app/hooks";
+import { RootState } from "@/app/store";
 
 interface HeaderProps {
   toggleModal: () => void;
@@ -15,6 +17,8 @@ function Header({toggleModal}: HeaderProps): JSX.Element {
   const [isShown, setIsShown] = useState(false);
   const [menuIsShown, setMenuIsShown] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const cartQuantity = useAppSelector((state: RootState) => state.cart.totalQuantity);
 
   useEffect(() => {
     const handleResize = () => {
@@ -80,13 +84,16 @@ function Header({toggleModal}: HeaderProps): JSX.Element {
               />
             </Link>
           </div>
-          <div className="header-cart-button">
+          <div className="header-user-button">
             <Image
               alt="cart"
               src={cart}
               className="header-button-image"
               onClick={toggleModal}
             />
+            {cartQuantity > 0 &&
+            <div className="total-cart-quantity"><p>{cartQuantity}</p></div>
+            }
           </div>
         </div>
       </div>
