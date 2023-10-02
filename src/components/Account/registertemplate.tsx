@@ -1,19 +1,21 @@
-import Link from "next/link";
-import React, { useState, ChangeEvent, FormEvent } from "react";
-
-interface RegistrationFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
+import { useDispatch } from 'react-redux';
+import Link from 'next/link';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { registerUser } from '../../app/registrationSlice';
+import { firestore, auth } from '../../firebase'; // Import Firebase Firestore and Authentication
+import { RegistrationFormData } from '../../types'; // Import the type
+import { ThunkDispatch } from 'redux-thunk';
+import { RootState } from '@/app/store';
+import { AnyAction } from 'redux';
 
 const RegisterInterface = () => {
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState<RegistrationFormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
   });
 
   const [formErrors, setFormErrors] = useState<string[]>([]);
@@ -23,43 +25,68 @@ const RegisterInterface = () => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     const errors: string[] = [];
 
     if (!formData.firstName.trim()) {
-      errors.push("First Name is required.");
+      errors.push('First Name is required.');
     }
 
     if (!formData.lastName.trim()) {
-      errors.push("Last Name is required.");
+      errors.push('Last Name is required.');
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
-      errors.push("Email is required.");
+      errors.push('Email is required.');
     } else if (!emailPattern.test(formData.email)) {
-      errors.push("Invalid email format.");
+      errors.push('Invalid email format.');
     }
 
     if (!formData.password) {
-      errors.push("Password is required.");
+      errors.push('Password is required.');
     } else if (formData.password.length < 6) {
-      errors.push("Password must be at least 6 characters long.");
+      errors.push('Password must be at least 6 characters long.');
     }
 
     setFormErrors(errors);
 
     if (errors.length === 0) {
-      console.log("Registration form is valid.");
-      console.log("First Name:", formData.firstName);
-      console.log("Last Name:", formData.lastName);
-      console.log("Email:", formData.email);
-      console.log("Password:", formData.password);
-      // Perform further actions like submitting the form to the server here
+      console.log('Registration form is valid.');
+      console.log('First Name:', formData.firstName);
+      console.log('Last Name:', formData.lastName);
+      console.log('Email:', formData.email);
+      console.log('Password:', formData.password);
+  
+      try {
+        // Create a user with Firebase Authentication
+        const response = await auth.createUserWithEmailAndPassword(
+          formData.email,
+          formData.password
+        );
+  
+        if (response.user) {
+          // Store additional user data in Firebase Firestore
+          await firestore.collection('users').doc(response.user.uid).set({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            password: formData.password,
+            // Add any other user data you want to store
+          });
+  
+          // Dispatch the registerUser action with the registration data
+          (dispatch as ThunkDispatch<RootState, void, AnyAction>)(registerUser(formData));
+        } else {
+          console.error('User not found in the response.');
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+      }
     } else {
-      console.error("Registration form has the following errors:");
+      console.error('Registration form has the following errors:');
       errors.forEach((error) => console.error(`- ${error}`));
     }
   };
