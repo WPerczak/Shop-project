@@ -1,4 +1,4 @@
-# This project is still in progress. There are still things to do like cart and login 
+# This project is still in progress. There are still things to do like login 
 
 (Test image is just for possibility of hiding header with scrolling.)
 
