@@ -1,7 +1,14 @@
 import Link from "next/link";
 import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../app/authSlice"; // Import the loginUser action
+import { AppDispatch } from "@/app/store";
+
+
 
 const LoginInterface = (): JSX.Element => {
+  const dispatch: AppDispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,11 +22,16 @@ const LoginInterface = (): JSX.Element => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your login logic here, such as making an API call to authenticate the user
-    console.log("Login clicked");
-    console.log("Email:", email);
-    console.log("Password:", password);
+  
+    if (!email || !password) {
+      // Handle empty email or password here, e.g., show an error message
+      console.error("Email and password are required.");
+      return;
+    }
+  
+    dispatch(loginUser({ email, password }));
   };
+  
 
   return (
     <div className="login-page">

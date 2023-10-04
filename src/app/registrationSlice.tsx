@@ -1,4 +1,3 @@
-// registrationSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { auth } from "../firebase";
 import { RegistrationFormData } from "../types";
@@ -52,7 +51,7 @@ const registrationSlice = createSlice({
   name: "registration",
   initialState,
   reducers: {
-    // Add any synchronous actions here if needed
+    
   },
   extraReducers: (builder) => {
     builder
@@ -74,4 +73,4 @@ const registrationSlice = createSlice({
 
 // Export the reducer and actions
 export default registrationSlice.reducer;
-export const { /* synchronous actions if needed */ } = registrationSlice.actions;
+// export const { /* synchronous actions if needed */ } = registrationSlice.actions;
