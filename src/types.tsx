@@ -5,3 +5,8 @@ export type RegistrationFormData = {
     password: string;
   };
   
+  export interface User {
+    id: string;
+    name: string;
+    email: string;
+  }
