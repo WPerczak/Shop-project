@@ -7,7 +7,7 @@ export const store = configureStore({
   reducer: {
     cart: cartSlice.reducer,
     // registration: registrationReducer, // Include the registration reducer
-    // auth: authSlice.reducer,
+    auth: authSlice.reducer,
   },
 });
 

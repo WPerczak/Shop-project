@@ -1,13 +1,28 @@
 import Link from "next/link";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../../app/authSlice"; // Import the loginUser action
-import { AppDispatch } from "@/app/store";
+import { authActions, loginUser, setAuthToken } from "../../app/authSlice"; // Import the loginUser action
+import { AppDispatch, RootState } from "@/app/store";
+import { useSelector } from "react-redux";
+import { redirect } from "next/navigation";
+import { useRouter } from 'next/router';
+
 
 
 
 const LoginInterface = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
+  const isAuth = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const router = useRouter();
+  console.log(isAuth);
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      // Dispatch an action to set the token in the Redux store
+      dispatch(authActions.setToken(token));
+    }
+  }, []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +44,16 @@ const LoginInterface = (): JSX.Element => {
       return;
     }
   
-    dispatch(loginUser({ email, password }));
+  dispatch(loginUser(email, password))
+    .then((token) => {
+      if (token) {
+        dispatch(setAuthToken(token));
+
+        
+        // Redirect 
+        router.push('/');      
+      }
+    });    
   };
   
 
