@@ -1,10 +1,9 @@
 import Link from "next/link";
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { authActions, loginUser, setAuthToken } from "../../app/authSlice"; // Import the loginUser action
+import { authActions, loginUser, setAuthToken, removeAuthToken } from "../../app/authSlice"; // Import the loginUser action
 import { AppDispatch, RootState } from "@/app/store";
 import { useSelector } from "react-redux";
-import { redirect } from "next/navigation";
 import { useRouter } from 'next/router';
 
 
@@ -33,6 +32,13 @@ const LoginInterface = (): JSX.Element => {
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+  };
+
+   const handleLogout = () => {
+    dispatch(removeAuthToken());
+    // You can also redirect the user to a different page or perform other actions if needed.
+    // For example, you can use the 'router' object to redirect the user.
+    router.push('/login'); 
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -80,7 +86,10 @@ const LoginInterface = (): JSX.Element => {
           />
         </div>
         <button type="submit" className="button">
-          SIGN IN
+          LOGIN
+        </button>
+        <button type="button" className="button" onClick={handleLogout}>
+          LOGOUT
         </button>
         <h3>
            you dont have account yet? <Link href="/register">SIGN UP</Link>

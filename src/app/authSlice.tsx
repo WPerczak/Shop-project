@@ -68,6 +68,12 @@ export const setAuthToken = (token: string) => (dispatch: any) => {
   dispatch(authActions.setToken(token));
 };
 
+export const removeAuthToken = () => (dispatch: any) => {
+  localStorage.removeItem("authToken");
+  dispatch(authActions.setToken(""));
+}
+
+
 export const authActions = {
   ...authSlice.actions,
   setToken: authSlice.actions.setToken, // Add a new action to set the token
