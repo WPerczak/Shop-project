@@ -1,25 +1,18 @@
 import Link from "next/link";
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { authActions, loginUser, setAuthToken, removeAuthToken } from "../../app/authSlice"; // Import the loginUser action
+import { useRouter } from "next/router";
+import { loginUser, authActions, clearUser } from "../../app/authSlice";
 import { AppDispatch, RootState } from "@/app/store";
-import { useSelector } from "react-redux";
-import { useRouter } from 'next/router';
-
-
-
 
 const LoginInterface = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
-  const isAuth = useSelector((state: RootState) => state.auth.isAuthenticated);
   const router = useRouter();
-  console.log(isAuth);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
     if (token) {
-      // Dispatch an action to set the token in the Redux store
-      dispatch(authActions.setToken(token));
+      dispatch(authActions.setUser({ user: null, token }));
     }
   }, []);
 
@@ -34,34 +27,38 @@ const LoginInterface = (): JSX.Element => {
     setPassword(e.target.value);
   };
 
-   const handleLogout = () => {
-    dispatch(removeAuthToken());
-    // You can also redirect the user to a different page or perform other actions if needed.
-    // For example, you can use the 'router' object to redirect the user.
-    router.push('/login'); 
+  const handleLogout = () => {
+    dispatch(clearUser());
+    router.push("/login");
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     if (!email || !password) {
-      // Handle empty email or password here, e.g., show an error message
       console.error("Email and password are required.");
       return;
     }
-  
-  dispatch(loginUser(email, password))
-    .then((token) => {
-      if (token) {
-        dispatch(setAuthToken(token));
 
-        
-        // Redirect 
-        router.push('/');      
+    try {
+      const resultAction: any = await dispatch(loginUser(email, password));
+
+      if (resultAction.error) {
+        // Thunk was rejected with an error.
+        const error = resultAction.error;
+        if (error.message) {
+          console.error("Login failed:", error.message);
+        } else {
+          console.error("Login failed. An error occurred.");
+        }
+      } else {
+        // Thunk completed successfully and user is authenticated.
+        router.push("/");
       }
-    });    
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+    }
   };
-  
 
   return (
     <div className="login-page">
@@ -92,7 +89,7 @@ const LoginInterface = (): JSX.Element => {
           LOGOUT
         </button>
         <h3>
-           you dont have account yet? <Link href="/register">SIGN UP</Link>
+          Don't have an account yet? <Link href="/register">SIGN UP</Link>
         </h3>
       </form>
     </div>
